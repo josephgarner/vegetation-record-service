@@ -1,21 +1,29 @@
 import Koa from "koa";
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
-import { createServer } from "http";
-import Router from "koa-router";
+import { rootRouter, planterVegetationList } from "./routes";
 import bodyParser from "koa-bodyparser";
-import { AppRoutes } from "./routes";
-// import { connectToDatabase } from "./db";
+import { connectToDatabase } from "./db";
 
+const logger = require("koa-logger");
 const app = new Koa();
-const router = new Router();
 
 console.log("ENV:", process.env.NODE_ENV);
-// connectToDatabase();
-
-AppRoutes.forEach((route) => router[route.method](route.path, route.action));
+connectToDatabase();
 
 // run app
 app.use(bodyParser());
-app.use(router.routes());
-app.use(router.allowedMethods());
-app.listen(3000);
+app.use(rootRouter.routes());
+app.use(rootRouter.allowedMethods());
+app.use(planterVegetationList.routes());
+app.use(planterVegetationList.allowedMethods());
+app.use(logger());
+
+app.on("error", function (error) {
+  console.log("Server has thrown and error");
+  console.log(error);
+});
+
+console.log(rootRouter.stack.map((i) => i.path));
+console.log(planterVegetationList.stack.map((i) => i.path));
+
+app.listen(4000);
