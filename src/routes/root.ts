@@ -7,9 +7,6 @@ import { handleError, validate } from "../utils";
 
 export const rootRouter = new Router();
 
-// rootRouter.use("", planterVegitationList.routes());
-// rootRouter.use(planterVegitationList.allowedMethods());
-
 const vegetationSchema = z.object({
   body: z.object({
     name: z.string(),
